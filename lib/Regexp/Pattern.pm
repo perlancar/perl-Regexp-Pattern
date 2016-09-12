@@ -4,7 +4,7 @@ package Regexp::Pattern;
 # VERSION
 
 use strict 'subs', 'vars';
-use warnings;
+#use warnings;
 
 use Exporter qw(import);
 our @EXPORT = qw(re);
