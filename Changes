@@ -1,5 +1,14 @@
 Revision history for Regexp-Pattern
 
+0.1.1   2016-09-13 (PERLANCAR)
+
+        - [Removed] To simplify interface, remove all helper functions except
+          re(). The removed functionalities can now be found in
+          App-RegexpPatternUtils.
+
+        - [optimize] Skip 'use warnings' to lower startup overhead.
+
+
 0.1.0   2016-09-12 (PERLANCAR)
 
         - First early release.
