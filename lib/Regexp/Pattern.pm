@@ -8,9 +8,8 @@ use strict 'subs', 'vars';
 
 use Exporter qw(import);
 our @EXPORT = qw(re);
-our @EXPORT_OK = qw(get_re_pat list_re_pats list_re_pat_modules re);
 
-sub get_re_pat {
+sub re {
     my $name = shift;
 
     my ($mod, $patname) = $name =~ /(.+)::(.+)/
@@ -33,17 +32,6 @@ sub get_re_pat {
         die "Bug in module '$mod': pattern '$patname': no pat/gen declared";
     }
 }
-
-sub list_re_pats {
-    die "Not yet implemented";
-}
-
-sub list_re_pat_modules {
-    die "Not yet implemented";
-}
-
-*re = \&get_re_pat;
-
 
 1;
 # ABSTRACT: Collection of regexp patterns
@@ -91,18 +79,20 @@ simply data that can be grabbed using a normal means, e.g.:
  say "Input does not match blah"
      unless $input =~ /\A$Regexp::Pattern::Example::RE{re1}{pat}\z/;
 
-C<Regexp::Pattern> (this module) also provides C<re()> function
+C<Regexp::Pattern> (this module) also provides C<re()> function to help retrieve
+the regexp pattern.
 
 
 =head1 FUNCTIONS
 
-=head2 get_re_pat
+=head2 re
 
-Get a regexp pattern by name from a C<Regexp::Pattern::*> module.
+Exported by default. Get a regexp pattern by name from a C<Regexp::Pattern::*>
+module.
 
 Syntax:
 
- get_re_pat($name[, \%args ]) => $re
+ re($name[, \%args ]) => $re
 
 C<$name> is I<MODULE_NAME::PATTERN_NAME> where I<MODULE_NAME> is name of a
 C<Regexp::Pattern::*> module without the C<Regexp::Pattern::> prefix and
