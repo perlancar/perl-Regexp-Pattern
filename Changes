@@ -4,7 +4,7 @@ Revision history for Regexp-Pattern
 
 	- No spec changes.
 
-	- Avoid use of defined-or (perl5.10-ism).
+	- Avoid use of defined-or (perl5.10-ism) [CT].
 
 
 0.1.1   2016-09-13 (PERLANCAR)
