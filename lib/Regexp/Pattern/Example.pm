@@ -30,7 +30,7 @@ _
 _
         gen => sub {
             my %args = @_;
-            my $variant = $args{variant} // 'A';
+            my $variant = $args{variant} || 'A';
             if ($variant eq 'A') {
                 return qr/\d{3}-\d{3}/;
             } else { # B
