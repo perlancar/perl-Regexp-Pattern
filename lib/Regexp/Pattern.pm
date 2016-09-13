@@ -111,21 +111,15 @@ I<PATTERN_NAME> is a key to the C<%RE> package global hash in the module.
 Die when pattern by name C<$name> cannot be found (either the module cannot be
 loaded or the pattern with that name is not found in the module).
 
-=head2 list_re_pat_modules
-
-=head2 list_re_pats
-
-=head2 re
-
-Shortcut for L</"get_re_pat">. Exported by default.
-
 
 =head1 SEE ALSO
 
 L<Regexp::Common>. Regexp::Pattern is an alternative to Regexp::Common.
 Regexp::Pattern offers simplicity and lower startup overhead. Instead of a magic
-hash, you query available regexes using C<get_re_pat> (shortcut C<re>) and
-C<list_re_pats> functions.
+hash, you retrieve available regexes from normal data structure or via the
+provided C<re()> function.
 
 L<Regexp::Common::RegexpPattern>, a bridge module to use patterns in
 C<Regexp::Pattern::*> modules via Regexp::Common.
+
+L<App::RegexpPatternUtils>
