@@ -43,6 +43,9 @@ sub re {
  my $re = re('YouTube::video_id');
  say "ID does not look like a YouTube video ID" unless $id =~ /\A$re\z/;
 
+ # a dynamic pattern (generated on-demand) with generator arguments
+ my $re2 = re('Example::re3', {variant=>"B"});
+
 
 =head1 SPECIFICATION VERSION
 
@@ -96,7 +99,9 @@ Syntax:
 
 C<$name> is I<MODULE_NAME::PATTERN_NAME> where I<MODULE_NAME> is name of a
 C<Regexp::Pattern::*> module without the C<Regexp::Pattern::> prefix and
-I<PATTERN_NAME> is a key to the C<%RE> package global hash in the module.
+I<PATTERN_NAME> is a key to the C<%RE> package global hash in the module. A
+dynamic pattern can accept arguments for its generator, and you can pass it as
+hashref in the second argument of C<re()>.
 
 Die when pattern by name C<$name> cannot be found (either the module cannot be
 loaded or the pattern with that name is not found in the module).
