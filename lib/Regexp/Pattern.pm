@@ -117,4 +117,7 @@ provided C<re()> function.
 L<Regexp::Common::RegexpPattern>, a bridge module to use patterns in
 C<Regexp::Pattern::*> modules via Regexp::Common.
 
+L<Regexp::Pattern::RegexpCommon>, a bridge module to use patterns in
+C<Regexp::Common::*> modules via Regexp::Pattern.
+
 L<App::RegexpPatternUtils>
