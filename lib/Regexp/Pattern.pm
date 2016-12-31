@@ -27,7 +27,7 @@ sub re {
     if ($var->{$patname}{pat}) {
         return $var->{$patname}{pat};
     } elsif ($var->{$patname}{gen}) {
-        return $var->{$patname}{gen}->(@_);
+        return $var->{$patname}{gen}->(ref($_[0]) eq 'HASH' ? %{$_[0]} : @_);
     } else {
         die "Bug in module '$mod': pattern '$patname': no pat/gen declared";
     }
