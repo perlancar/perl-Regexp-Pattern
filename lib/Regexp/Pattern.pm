@@ -247,6 +247,50 @@ using a combination of these options: C<-has_tag> (only select patterns that
 have a specified tag), C<-lacks_tag> (only select patterns that do not have a
 specified tag).
 
+=head2 Recommendations for writing the regex patterns
+
+=over
+
+=item * Regexp pattern should be written as a C<qr//> literal
+
+Using a string literal is less desirable. That is:
+
+ pat => qr/foo[abc]+/,
+
+is preferable over:
+
+ pat => 'foo[abc]+',
+
+=item * Regexp pattern should not be anchored (unless really necessary)
+
+That is:
+
+ pat => qr/foo/,
+
+is preferable over:
+
+ pat => qr/^foo/, # or qr/foo$/, or qr/\Afoo\z/
+
+Adding anchors limits the reusability of the pattern. When composing pattern,
+user can add anchors herself if needed.
+
+When you define an anchored pattern, adding tag C<anchored> is recommended:
+
+ tags => ['anchored'],
+
+=item * Regexp pattern should not contain capture groups (unless really necessary)
+
+Adding capture groups limits the reusability of the pattern because it can
+affect the groups of the composed pattern. When composing pattern, user can add
+captures herself if needed.
+
+=item * Regexp pattern should not contain modifiers unless necessary
+
+An exception to this rule is the /x modifier which is usually recommended for
+longer patterns.
+
+=back
+
 
 =head1 FUNCTIONS
 
