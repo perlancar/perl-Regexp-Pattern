@@ -119,7 +119,7 @@ sub import {
 
 =head1 SYNOPSIS
 
-Subroutine interface (getting regexp patterns via the C<re()> function):
+Subroutine interface:
 
  use Regexp::Pattern; # exports re()
 
@@ -129,14 +129,15 @@ Subroutine interface (getting regexp patterns via the C<re()> function):
  # a dynamic pattern (generated on-demand) with generator arguments
  my $re2 = re('Example::re3', {variant=>"B"});
 
-Hash interface (getting regexp patterns by importing it into keys of the
-caller's C<%RE> hash variable, similar to L<Regexp::Common>):
+Hash interface (a la L<Regexp::Common> but simpler with regular/non-magical hash
+that is only 1-level deep):
 
  use Regexp::Pattern 'YouTube::video_id';
  say "ID does not look like a YouTube video ID"
      unless $id =~ /\A$RE{video_id}\z/;
 
  # more complex example
+
  use Regexp::Pattern (
      're',                                # we still want the re() function
      'Foo::bar' => (-as => 'qux'),        # the pattern will be in your $RE{qux}
@@ -158,7 +159,8 @@ caller's C<%RE> hash variable, similar to L<Regexp::Common>):
 =head1 DESCRIPTION
 
 Regexp::Pattern is a convention for organizing reusable regexp patterns in
-modules.
+modules, as well as framework for some convenience in using those patterns in
+your program.
 
 =head2 Structure of an example Regexp::Pattern::* module
 
@@ -197,9 +199,9 @@ _
 
 =head3 Standalone
 
-A Regexp::Pattern::* module can be used standalone (i.e. no need to use via the
-Regexp::Pattern framework), as it contains simply data that can be grabbed using
-a normal means, e.g.:
+A Regexp::Pattern::* module can be used in a standalone way (i.e. no need to use
+via the Regexp::Pattern framework), as it simply contains data that can be
+grabbed using a normal means, e.g.:
 
  use Regexp::Pattern::Example;
 
@@ -213,15 +215,15 @@ the regexp pattern. See L</"re"> for more details.
 
 =head3 Via Regexp::Pattern, hash interface
 
-Additionally, Regexp::Pattern lets you import regexp patterns into your C<%RE>
-package hash variable, a la L<Regexp::Common> (but simpler because the hash is
-just a regular hash, only 1-level deep, and not magical).
+Additionally, Regexp::Pattern (since v0.2.0) lets you import regexp patterns
+into your C<%RE> package hash variable, a la L<Regexp::Common> (but simpler
+because the hash is just a regular hash, only 1-level deep, and not magical).
 
 To import, you specify qualified pattern names as the import arguments:
 
  use Regexp::Pattern 'Q::pat1', 'Q::pat2', ...;
 
-A qualified pattern name can optionally be followed by a list of name-value
+Each qualified pattern name can optionally be followed by a list of name-value
 pairs. A pair name can be an option name (which is dash followed by a word, e.g.
 C<-as>, C<-prefix>) or a generator argument name for dynamic pattern.
 
