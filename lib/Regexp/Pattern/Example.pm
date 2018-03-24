@@ -18,6 +18,7 @@ A longer description.
 
 _
         pat => qr/.../,
+        tags => ['A','B'],
     },
 
     # dynamic (regexp generator)
@@ -45,6 +46,7 @@ _
                 req => 1,
             },
         },
+        tags => ['B','C'],
     },
 );
 
