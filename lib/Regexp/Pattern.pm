@@ -115,7 +115,7 @@ sub import {
 }
 
 1;
-# ABSTRACT: Collection of regexp patterns
+# ABSTRACT: Convention/framework for modules that contain collection of regexes
 
 =head1 SYNOPSIS
 
@@ -159,7 +159,7 @@ that is only 1-level deep):
 =head1 DESCRIPTION
 
 Regexp::Pattern is a convention for organizing reusable regexp patterns in
-modules, as well as framework for some convenience in using those patterns in
+modules, as well as framework to provide convenience in using those patterns in
 your program.
 
 =head2 Structure of an example Regexp::Pattern::* module
