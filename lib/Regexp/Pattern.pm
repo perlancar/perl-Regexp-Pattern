@@ -255,7 +255,7 @@ Using a string literal is less desirable. That is:
 
  pat => qr/foo[abc]+/,
 
-is preferable over:
+is preferred over:
 
  pat => 'foo[abc]+',
 
@@ -265,7 +265,7 @@ That is:
 
  pat => qr/foo/,
 
-is preferable over:
+is preferred over:
 
  pat => qr/^foo/, # or qr/foo$/, or qr/\Afoo\z/
 
