@@ -282,6 +282,10 @@ Adding capture groups limits the reusability of the pattern because it can
 affect the groups of the composed pattern. When composing pattern, user can add
 captures herself if needed.
 
+When you define an anchored pattern, adding tag C<capturing> is recommended:
+
+ tags => ['capturing'],
+
 =back
 
 
