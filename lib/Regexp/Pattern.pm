@@ -154,7 +154,7 @@ that is only 1-level deep):
 
 =head1 SPECIFICATION VERSION
 
-0.2.0
+0.2
 
 =head1 DESCRIPTION
 
