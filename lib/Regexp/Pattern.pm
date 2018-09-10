@@ -30,9 +30,11 @@ sub re {
     } else {
         die "Bug in module '$mod': pattern '$patname': no pat/gen declared";
     }
+
     if ($args{-anchor}) {
-        $pat = qr/\A(?:$pat)\z/;
+            $pat = qr/\A(?:$pat)\z/;
     }
+
     return $pat;
 }
 
