@@ -8,6 +8,7 @@ use strict 'subs', 'vars';
 
 sub re {
     my $name = shift;
+    my %args = ref($_[0]) eq 'HASH' ? %{$_[0]} : @_;
 
     my ($mod, $patname) = $name =~ /(.+)::(.+)/
         or die "Invalid pattern name '$name', should be 'MODNAME::PATNAME'";
@@ -21,13 +22,18 @@ sub re {
     exists($var->{$patname})
         or die "No regexp pattern named '$patname' in package '$mod'";
 
+    my $pat;
     if ($var->{$patname}{pat}) {
-        return $var->{$patname}{pat};
+        $pat = $var->{$patname}{pat};
     } elsif ($var->{$patname}{gen}) {
-        return $var->{$patname}{gen}->(ref($_[0]) eq 'HASH' ? %{$_[0]} : @_);
+        $pat = $var->{$patname}{gen}->(%args);
     } else {
         die "Bug in module '$mod': pattern '$patname': no pat/gen declared";
     }
+    if ($args{-anchor}) {
+        $pat = qr/\A(?:$pat)\z/;
+    }
+    return $pat;
 }
 
 sub import {
@@ -325,6 +331,9 @@ C<Regexp::Pattern::*> module without the C<Regexp::Pattern::> prefix and
 I<PATTERN_NAME> is a key to the C<%RE> package global hash in the module. A
 dynamic pattern can accept arguments for its generator, and you can pass it as
 hashref in the second argument of C<re()>.
+
+B<Anchoring.> You can also put C<< -anchor => 1 >> in C<%args>. This will
+conveniently wraps the regex inside C<< qr/\A(?:...)\z/ >>.
 
 Die when pattern by name C<$name> cannot be found (either the module cannot be
 loaded or the pattern with that name is not found in the module).
