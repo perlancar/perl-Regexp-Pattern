@@ -191,7 +191,26 @@ description, tags, and so on, for example (taken from L<Regexp::Pattern::CPAN>):
      I'm not sure whether PAUSE allows digit for the first letter. For safety
      I'm assuming no.
      HERE
+     examples => [
+         {str=>'PERLANCAR', matches=>1},
+         {str=>'BAD ID', matches=>0},
+     ],
  }
+
+B<Examples>. Your regexp specification can include an C<examples> property (see
+above for example). The value of the C<examples> property is an array, each of
+which should be a defhash. For each example, at the minimum you should specify
+C<str> (string to be matched by the regexp), and C<matches> (a boolean value
+that specifies whether the regexp should match the string or not, or an
+array/hash that specifies the captures). You can of course specify other defhash
+properties (e.g. C<summary>, C<description>, etc). Other example properties
+might be introduced in the future.
+
+If you use L<Dist::Zilla> to build your distribution, you can use the plugin
+L<[Regexp::Pattern]|Dist::Zilla::Plugin::Regexp::Pattern> to test the examples
+during building, and the L<Pod::Weaver> plugin
+L<[-Regexp::Pattern]|Pod::Weaver::Plugin::Regexp::Pattern> to render the
+examples in your POD.
 
 =head2 Using a Regexp::Pattern::* module
 
