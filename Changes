@@ -1,3 +1,9 @@
+0.2.7   2018-09-10 (PERLANCAR)
+
+	- Enable re() to return regex wrapped inside qr/\A(?:...)\z/ with
+	  -anchor=>1 argument.
+
+
 0.2.6   2018-09-10 (PERLANCAR)
 
 	- No spec changes.
