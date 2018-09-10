@@ -1,3 +1,11 @@
+0.2.6   2018-09-10 (PERLANCAR)
+
+	- No spec changes.
+
+        - [build] Rebuild to fix POD that didn't show gen_args in examples for
+          dynamic pattern (PWP:Regexp::Pattern 0.002-).
+
+
 0.2.5   2018-09-10 (PERLANCAR)
 
 	- No spec changes.
