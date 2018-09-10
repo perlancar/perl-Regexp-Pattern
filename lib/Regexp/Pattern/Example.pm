@@ -74,6 +74,40 @@ _
             },
         },
         tags => ['B','C'],
+        examples => [
+            {
+                summary => 'An example that matches',
+                gen_args => {variant=>'A'},
+                str => '123-456',
+                matches => 1,
+            },
+            {
+                summary => "An example that doesn't match",
+                gen_args => {variant=>'B'},
+                str => '123-456',
+                matches => 0,
+            },
+        ],
+    },
+
+    re4 => {
+        summary => 'This is a regexp that does capturing',
+        tags => ['capturing'],
+        pat => qr/(\d{3})-(\d{3})/,
+        examples => [
+            {str=>'123-456', matches=>[123, 456]},
+            {str=>'foo-bar', matches=>[]},
+        ],
+    },
+
+    re5 => {
+        summary => 'This is another regexp that does (named) capturing and anchoring',
+        tags => ['capturing', 'anchored'],
+        pat => qr/^(?<cap1>\d{3})-(?<cap2>\d{3})/,
+        examples => [
+            {str=>'123-456', matches=>{cap1=>123, cap2=>456}},
+            {str=>'something 123-456', matches=>{}},
+        ],
     },
 );
 
