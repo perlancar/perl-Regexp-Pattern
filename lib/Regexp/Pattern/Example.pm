@@ -7,7 +7,7 @@ package Regexp::Pattern::Example;
 
 our %RE = (
     # the minimum spec
-    re1 => { pat => qr/\d{3}-\d{4}/ },
+    re1 => { pat => qr/\d{3}-\d{3}/ },
 
     # more complete spec
     re2 => {
@@ -17,8 +17,35 @@ our %RE = (
 A longer description.
 
 _
-        pat => qr/.../,
+        pat => qr/\d{3}-\d{3}(?:-\d{5})?/,
         tags => ['A','B'],
+        examples => [
+            {
+                str => '123-456',
+                matches => 1,
+            },
+            {
+                summary => 'Another example that matches',
+                str => '123-456-78901',
+                matches => 1,
+            },
+            {
+                summary => 'An example that does not match',
+                str => '123456',
+                matches => 0,
+            },
+            {
+                summary => 'An example that does not get tested',
+                str => '123456',
+            },
+            {
+                summary => 'Another example that does not get tested nor rendered to POD',
+                str => '234567',
+                matches => 0,
+                test => 0,
+                doc => 0,
+            },
+        ],
     },
 
     # dynamic (regexp generator)
