@@ -350,3 +350,5 @@ If you use L<Dist::Zilla>: L<Dist::Zilla::Plugin::Regexp::Pattern>,
 L<Pod::Weaver::Plugin::Regexp::Pattern>,
 L<Dist::Zilla::Plugin::AddModule::RegexpCommon::FromRegexpPattern>,
 L<Dist::Zilla::Plugin::AddModule::RegexpPattern::FromRegexpCommon>.
+
+L<Test::Regexp::Pattern> and L<test-regexp-pattern>.
