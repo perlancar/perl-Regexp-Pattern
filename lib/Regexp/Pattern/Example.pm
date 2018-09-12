@@ -3,6 +3,8 @@ package Regexp::Pattern::Example;
 # DATE
 # VERSION
 
+use 5.010001;
+
 # BEGIN_BLOCK: def
 
 our %RE = (
