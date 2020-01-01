@@ -201,7 +201,7 @@ description, tags, and so on, for example (taken from L<Regexp::Pattern::CPAN>):
      HERE
      examples => [
          {str=>'PERLANCAR', matches=>1},
-         {str=>'BAD ID', matches=>0},
+         {str=>'BAD ID', anchor=>1, matches=>0},
      ],
  }
 
@@ -339,6 +339,28 @@ conveniently wraps the regex inside C<< qr/\A(?:...)\z/ >>.
 
 Die when pattern by name C<$name> cannot be found (either the module cannot be
 loaded or the pattern with that name is not found in the module).
+
+
+=head1 FAQ
+
+=head2 My pattern is not anchored, but what if I want to test the anchored version?
+
+You can add C<< anchor=>1 >> or C<< gen_args=>{-anchor=>1} >> in the example,
+for example:
+
+ {
+     summary     => 'PAUSE author ID, or PAUSE ID for short',
+     pat         => qr/[A-Z][A-Z0-9]{1,8}/,
+     description => <<~HERE,
+     I'm not sure whether PAUSE allows digit for the first letter. For safety
+     I'm assuming no.
+     HERE
+     examples => [
+         {str=>'PERLANCAR', matches=>1},
+         {str=>'BAD ID', anchor=>1, matches=>0, summary=>"Contains whitespace"},
+         {str=>'NAMETOOLONG', gen_args=>{-anchor=>1}, matches=>0, summary=>"Too long"},
+     ],
+ }
 
 
 =head1 SEE ALSO
