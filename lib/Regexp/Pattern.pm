@@ -1,26 +1,69 @@
 package Regexp::Pattern;
 
+# AUTHORITY
 # DATE
+# DIST
 # VERSION
 
 use strict 'subs', 'vars';
 #use warnings;
 
+my %loaded_module_info; # key = name (without Regexp::Pattern:: prefix), value = {engine=>...}
+sub _load_rp_module {
+    my ($rp_module, %opts) = @_;
+
+    my $module = "Regexp::Pattern::$rp_module";
+    (my $module_pm = "$module.pm") =~ s!::!/!g;
+
+    my $engine = $opts{engine} || "(perl)";
+
+  CHECK_ALREADY_LOADED:
+    {
+        if ($loaded_module_info{$rp_module}) {
+            if ($engine ne $loaded_module_info{$rp_module}{engine}) {
+                die "Module $module was loaded by us with ".($engine eq '(perl)' ? "default regexp engine" : "re::engine::$engine").
+                    ", while we are now requesting to load it with ".($engine eq '(perl)' ? "default regexp engine" : "re::engine::$engine");
+            }
+            return;
+        } elsif (exists $INC{$module_pm}) {
+            if ($engine ne '(perl)') {
+                die "Module $module was loaded by some other code with (presumably) default regexp engine".
+                    ", while we are now requesting to load it with re::engine::$engine";
+            }
+            return;
+        }
+    }
+
+    require Require::Hook::More;
+    local @INC = (Require::Hook::More->new(
+        #debug => 1,
+        prepend_code => $engine eq '(perl)' ? '' : "use re::engine::$engine; ",
+    ), @INC);
+    require $module_pm;
+
+    $loaded_module_info{$rp_module} = {
+        engine => $engine,
+    };
+}
+
 sub re {
     my $name = shift;
     my %args = ref($_[0]) eq 'HASH' ? %{$_[0]} : @_;
 
-    my ($mod, $patname) = $name =~ /(.+)::(.+)/
+    my ($rp_module, $patname) = $name =~ /(.+)::(.+)/
         or die "Invalid pattern name '$name', should be 'MODNAME::PATNAME'";
 
-    $mod = "Regexp::Pattern::$mod";
-    (my $mod_pm = "$mod.pm") =~ s!::!/!g;
-    require $mod_pm;
+    # special args, but will also be passed as gen_args
+    my $opt_anchor = $args{-anchor};
+    my $opt_engine = $args{-engine};
 
-    my $var = \%{"$mod\::RE"};
+    my $module = "Regexp::Pattern::$rp_module";
+    _load_rp_module($rp_module, engine=>$opt_engine);
+
+    my $var = \%{"$module\::RE"};
 
     exists($var->{$patname})
-        or die "No regexp pattern named '$patname' in package '$mod'";
+        or die "No regexp pattern named '$patname' in package '$module'";
 
     my $pat;
     if ($var->{$patname}{pat}) {
@@ -28,11 +71,11 @@ sub re {
     } elsif ($var->{$patname}{gen}) {
         $pat = $var->{$patname}{gen}->(%args);
     } else {
-        die "Bug in module '$mod': pattern '$patname': no pat/gen declared";
+        die "Bug in module '$module': pattern '$patname': no pat/gen declared";
     }
 
-    if ($args{-anchor}) {
-            $pat = qr/\A(?:$pat)\z/;
+    if ($opt_anchor) {
+        $pat = qr/\A(?:$pat)\z/;
     }
 
     return $pat;
@@ -48,16 +91,20 @@ sub import {
 
     while (@args) {
         my $arg = shift @args;
-        my ($mod, $name0, $as, $prefix, $suffix,
+        my ($rp_module, $name0, $as, $prefix, $suffix,
             $has_tag, $lacks_tag, $gen_args);
         if ($arg eq 're') {
             *{"$caller\::re"} = \&re;
             next;
         } elsif ($arg =~ /\A(\w+(?:::\w+)*)::(\w+|\*)\z/) {
-            ($mod, $name0) = ($1, $2);
+            ($rp_module, $name0) = ($1, $2);
             ($as, $prefix, $suffix, $has_tag, $lacks_tag) =
                 (undef, undef, undef, undef, undef);
             $gen_args = {};
+            if (@args && ref $args[0] eq 'HASH') {
+                $gen_args = shift @args;
+                next;
+            }
             while (@args >= 2 && $args[0] =~ /\A-?\w+\z/) {
                 my ($k, $v) = splice @args, 0, 2;
                 if ($k eq '-as') {
@@ -66,6 +113,10 @@ sub import {
                     die "Please use a simple identifier for value of -as"
                         unless $v =~ /\A\w+\z/;
                     $as = $v;
+                } elsif ($k eq '-engine') {
+                    $gen_args->{-engine} = $v;
+                } elsif ($k eq '-anchor') {
+                    $gen_args->{-engine} = $v;
                 } elsif ($k eq '-prefix') {
                     $prefix = $v;
                 } elsif ($k eq '-suffix') {
@@ -90,10 +141,9 @@ sub import {
 
         my @names;
         if ($name0 eq '*') {
-            my $mod = "Regexp::Pattern::$mod";
-            (my $mod_pm = "$mod.pm") =~ s!::!/!g;
-            require $mod_pm;
-            my $var = \%{"$mod\::RE"};
+            my $module = "Regexp::Pattern::$rp_module";
+            _load_rp_module($rp_module, engine=>$gen_args->{-engine});
+            my $var = \%{"$module\::RE"};
             for my $n (sort keys %$var) {
                 my $tags = $var->{$n}{tags} || [];
                 if (defined $has_tag) {
@@ -105,7 +155,7 @@ sub import {
                 push @names, $n;
             }
             unless (@names) {
-                warn "No patterns imported in wildcard import '$mod\::*'";
+                warn "No patterns imported in wildcard import '$module\::*'";
             }
         } else {
             @names = ($name0);
@@ -115,9 +165,9 @@ sub import {
                 (defined $prefix ? $prefix : "") . $n .
                 (defined $suffix ? $suffix : "");
             if (exists ${"$caller\::RE"}{$name}) {
-                warn "Overwriting pattern '$name' by importing '$mod\::$n'";
+                warn "Overwriting pattern '$name' by importing '$rp_module\::$n'";
             }
-            ${"$caller\::RE"}{$name} = re("$mod\::$n", $gen_args);
+            ${"$caller\::RE"}{$name} = re("$rp_module\::$n", $gen_args);
         }
     }
 }
@@ -250,8 +300,8 @@ To import, you specify qualified pattern names as the import arguments:
  use Regexp::Pattern 'Q::pat1', 'Q::pat2', ...;
 
 Each qualified pattern name can optionally be followed by a list of name-value
-pairs. A pair name can be an option name (which is dash followed by a word, e.g.
-C<-as>, C<-prefix>) or a generator argument name for dynamic pattern.
+-pairs. A pair name can be an option name (which is dash followed by a word,
+e.g. -C<-as>, C<-prefix>) or a generator argument name for dynamic pattern.
 
 B<Wildcard import.> Instead of a qualified pattern name, you can use
 'Module::SubModule::*' wildcard syntax to import all patterns from a pattern
@@ -272,6 +322,9 @@ B<Filtering.> When wildcard-importing, you can select the patterns you want
 using a combination of these options: C<-has_tag> (only select patterns that
 have a specified tag), C<-lacks_tag> (only select patterns that do not have a
 specified tag).
+
+B<Other options.> C<-anchor> and C<-engine> will be passed to re() in the second
+hashref argument.
 
 =head2 Recommendations for writing the regex patterns
 
@@ -333,6 +386,11 @@ C<Regexp::Pattern::*> module without the C<Regexp::Pattern::> prefix and
 I<PATTERN_NAME> is a key to the C<%RE> package global hash in the module. A
 dynamic pattern can accept arguments for its generator, and you can pass it as
 hashref in the second argument of C<re()>.
+
+B<Selecting regex engine.> You can also put C<< -engine => $name >> in C<%args>.
+This will cause the Regexp::Pattern::* module to be loaded with a specific
+C<re::engine::$name> module pragma. An exception will be thrown if the module
+has already been loaded with a different re::engine::* pragma.
 
 B<Anchoring.> You can also put C<< -anchor => 1 >> in C<%args>. This will
 conveniently wraps the regex inside C<< qr/\A(?:...)\z/ >>.
