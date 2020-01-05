@@ -6,7 +6,9 @@ package Regexp::Pattern;
 # VERSION
 
 use strict 'subs', 'vars';
-#use warnings;
+# IFUNBUILT
+use warnings;
+# END IFUNBUILT
 
 my %loaded_module_info; # key = name (without Regexp::Pattern:: prefix), value = {engine=>...}
 sub _load_rp_module {
