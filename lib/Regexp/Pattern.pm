@@ -166,10 +166,10 @@ that is only 1-level deep):
      'JSON::*' => (-prefix => 'json_'),   # add prefix
      'License::*' => (
        # filtering options
-       -has_tag    => 'family:cc',        # only select patterns that has this tag
-       -lacks_tag  => 'type:unversioned', # only select patterns that does not have this tag
-       -has_tag_matching   => qr/^type:/, # only select patterns that has a tag matching this regex
-       -lacks_tag_matching => qr/^type:/, # only select patterns that does not have any tags matching this regex
+       -has_tag    => 'family:cc',        # only select patterns that have this tag
+       -lacks_tag  => 'type:unversioned', # only select patterns that do not have this tag
+       -has_tag_matching   => qr/^type:/, # only select patterns that have at least a tag matching this regex
+       -lacks_tag_matching => qr/^type:/, # only select patterns that do not have any tags matching this regex
 
        # other options
        -prefix  => 'pat_',       # add prefix
@@ -289,9 +289,9 @@ name:
 B<Filtering.> When wildcard-importing, you can select the patterns you want
 using a combination of these options: C<-has_tag> (only select patterns that
 have a specified tag), C<-lacks_tag> (only select patterns that do not have a
-specified tag), C<-has_tag_matching> (only select patterns that has at least one
-tag matching specified regex pattern), C<-lacks_tag_matching> (only select
-patterns that does not have any tags matching specified regex pattern).
+specified tag), C<-has_tag_matching> (only select patterns that have at least
+one tag matching specified regex pattern), C<-lacks_tag_matching> (only select
+patterns that do not have any tags matching specified regex pattern).
 
 =head2 Recommendations for writing the regex patterns
 
