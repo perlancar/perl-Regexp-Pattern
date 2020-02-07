@@ -1,6 +1,8 @@
 package Regexp::Pattern;
 
+# AUTHORITY
 # DATE
+# DIST
 # VERSION
 
 use strict 'subs', 'vars';
@@ -49,13 +51,13 @@ sub import {
     while (@args) {
         my $arg = shift @args;
         my ($mod, $name0, $as, $prefix, $suffix,
-            $has_tag, $lacks_tag, $gen_args);
+            $has_tag, $lacks_tag, $has_tag_matching, $lacks_tag_matching, $gen_args);
         if ($arg eq 're') {
             *{"$caller\::re"} = \&re;
             next;
         } elsif ($arg =~ /\A(\w+(?:::\w+)*)::(\w+|\*)\z/) {
             ($mod, $name0) = ($1, $2);
-            ($as, $prefix, $suffix, $has_tag, $lacks_tag) =
+            ($as, $prefix, $suffix, $has_tag, $lacks_tag, $has_tag_matching, $lacks_tag_matching) =
                 (undef, undef, undef, undef, undef);
             $gen_args = {};
             while (@args >= 2 && $args[0] =~ /\A-?\w+\z/) {
@@ -74,6 +76,10 @@ sub import {
                     $has_tag = $v;
                 } elsif ($k eq '-lacks_tag') {
                     $lacks_tag = $v;
+                } elsif ($k eq '-has_tag_matching') {
+                    $has_tag_matching = ref $v eq 'Regexp' ? $v : qr/$v/;
+                } elsif ($k eq '-lacks_tag_matching') {
+                    $lacks_tag_matching = ref $v eq 'Regexp' ? $v : qr/$v/;
                 } elsif ($k !~ /\A-/) {
                     $gen_args->{$k} = $v;
                 } else {
@@ -101,6 +107,12 @@ sub import {
                 }
                 if (defined $lacks_tag) {
                     next if grep { $_ eq $lacks_tag } @$tags;
+                }
+                if (defined $has_tag_matching) {
+                    next unless grep { $_ =~ $has_tag_matching } @$tags;
+                }
+                if (defined $lacks_tag_matching) {
+                    next if grep { $_ =~ $lacks_tag_matching } @$tags;
                 }
                 push @names, $n;
             }
@@ -153,9 +165,15 @@ that is only 1-level deep):
      'Example::re3' => (variant => 'B'),  # supply generator arguments
      'JSON::*' => (-prefix => 'json_'),   # add prefix
      'License::*' => (
-       -has_tag    => 'family:cc',        # select by tag
-       -lacks_tag  => 'type:unversioned', #   also select by lack of tag
-       -suffix     => '_license',         #   also add suffix
+       # filtering options
+       -has_tag    => 'family:cc',        # only select patterns that has this tag
+       -lacks_tag  => 'type:unversioned', # only select patterns that does not have this tag
+       -has_tag_matching   => qr/^type:/, # only select patterns that has a tag matching this regex
+       -lacks_tag_matching => qr/^type:/, # only select patterns that does not have any tags matching this regex
+
+       # other options
+       -prefix  => 'pat_',       # add prefix
+       -suffix  => '_license',   # add suffix
      ),
  );
 
@@ -271,7 +289,9 @@ name:
 B<Filtering.> When wildcard-importing, you can select the patterns you want
 using a combination of these options: C<-has_tag> (only select patterns that
 have a specified tag), C<-lacks_tag> (only select patterns that do not have a
-specified tag).
+specified tag), C<-has_tag_matching> (only select patterns that has at least one
+tag matching specified regex pattern), C<-lacks_tag_matching> (only select
+patterns that does not have any tags matching specified regex pattern).
 
 =head2 Recommendations for writing the regex patterns
 
