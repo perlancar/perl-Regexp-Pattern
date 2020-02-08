@@ -297,15 +297,20 @@ patterns that do not have any tags matching specified regex pattern).
 
 =over
 
-=item * Regexp pattern should be written as a C<qr//> literal
+=item * Regexp pattern should in general be written as a C<qr//> literal instead of string
 
-Using a string literal is less desirable. That is:
+That is:
 
  pat => qr/foo[abc]+/,
 
 is preferred over:
 
  pat => 'foo[abc]+',
+
+Using a string literal is less desirable because of lack of compile-time
+checking. An exception to this rule is when you want to delay regex compilation
+for some reason, e.g. you want your user to compile the patterns themselves
+using different regex engine (see C<re::engine::*> modules on CPAN).
 
 =item * Regexp pattern should not be anchored (unless really necessary)
 
