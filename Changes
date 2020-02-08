@@ -8,7 +8,7 @@
 
 0.2.12  2020-02-07  Released-By: PERLANCAR; Urgency: medium
 
-	- Add import option -has_tag_matching & -lacks_tag_matching [GH#3].
+	- Add import options -has_tag_matching & -lacks_tag_matching [GH#3].
 
 
 0.2.11  2020-01-03  Released-By: PERLANCAR; Urgency: low
