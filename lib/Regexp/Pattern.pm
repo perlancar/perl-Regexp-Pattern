@@ -34,7 +34,13 @@ sub re {
     }
 
     if ($args{-anchor}) {
+        if ($args{-anchor} eq 'left') {
+            $pat = qr/\A(?:$pat)/;
+        } elsif ($args{-anchor} eq 'right') {
+            $pat = qr/(?:$pat)\z/;
+        } else {
             $pat = qr/\A(?:$pat)\z/;
+        }
     }
 
     return $pat;
@@ -360,7 +366,9 @@ dynamic pattern can accept arguments for its generator, and you can pass it as
 hashref in the second argument of C<re()>.
 
 B<Anchoring.> You can also put C<< -anchor => 1 >> in C<%args>. This will
-conveniently wraps the regex inside C<< qr/\A(?:...)\z/ >>.
+conveniently wraps the regex inside C<< qr/\A(?:...)\z/ >>. To only add left
+anchoring, specify C<< -anchor => 'left' >> (C<< qr/\A(?:...)/ >>. To only add
+right anchoring, specify C<< -anchor => 'right' >> (C<< qr/(?:...)\z/ >>.
 
 Die when pattern by name C<$name> cannot be found (either the module cannot be
 loaded or the pattern with that name is not found in the module).
