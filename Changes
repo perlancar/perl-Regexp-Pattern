@@ -1,3 +1,9 @@
+0.2.14  2020-04-01  Released-By: PERLANCAR; Urgency: medium
+
+	- Support left-only anchoring (-anchor=>'left') and right-only
+	  anchoring (-anchor=>'right') [GH#4].
+
+
 0.2.13  2020-02-08  Released-By: PERLANCAR; Urgency: low
 
 	- No spec changes.
